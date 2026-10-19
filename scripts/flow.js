@@ -97,7 +97,7 @@ async function confirmLeaving() {
       { action: "keep", label: "DXSS.Dialog.Setup.Keep", icon: "fa-solid fa-door-open" },
       { action: "stay", label: "DXSS.Dialog.Setup.Stay", icon: "fa-solid fa-xmark" }
     ]
-  }).catch(() => null);
+  }); // closing the dialog resolves to null; an error goes to the caller, which lets the GM leave
   if (choice === "keep") return true;
   if (choice !== "end") return false; // "Stay" or the dialog was closed
   const result = await endSession({ confirm: false });
