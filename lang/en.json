@@ -140,7 +140,9 @@
       "Nat20s": "Natural 20s",
       "Nat1s": "Natural 1s",
       "DiceLine": "d20 avg {avg} · max rolls {max} · 1s {ones} · {rolls} rolls",
-      "Achievements": "Achievements"
+      "Achievements": "Achievements",
+      "MoreAchievements": "…and {n} more achievements in the full summary",
+      "MoreAchievementsOne": "…and 1 more achievement in the full summary"
     },
     "Achievement": {
       "blessed": {

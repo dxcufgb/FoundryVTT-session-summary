@@ -178,13 +178,33 @@ const joinList = (parts, sep = " · ") => parts.filter(Boolean).join(sep);
  * sections are dropped first, then lists are shortened.
  */
 export function buildMarkdown(summary, { limit = DISCORD_LIMIT } = {}) {
-  // First shorten the lists...
+  const join = sections => sections.map(s => s.text).join("\n");
+  // 1. Shorten the lists
   for (const maxItems of [8, 6, 4]) {
-    const text = markdownSections(summary, { maxItems }).map(s => s.text).join("\n");
+    const text = join(markdownSections(summary, { maxItems }));
     if (text.length <= limit) return text;
   }
-  // ...then drop the least important sections (highest priority number) until it fits
-  const sections = markdownSections(summary, { maxItems: 3 });
+  // 2. Leave out the least important sections; 3. then the achievement descriptions;
+  // 4. then, only for a huge party, the last achievements (a line says how many more there are).
+  // An achievement is always shown whole, never cut in the middle.
+  const total = summary.achievements.length;
+  const attempts = [{ descriptions: true, shown: total }];
+  for (let shown = total; shown >= 0; shown--) attempts.push({ descriptions: false, shown });
+  for (const options of attempts) {
+    const text = fitSections(markdownSections(summary, { maxItems: 3, ...options }), limit);
+    if (text != null) return text;
+  }
+  // Unreachable in practice (header and fight line only): drop whole lines from the end
+  const lines = join(markdownSections(summary, { maxItems: 3, descriptions: false, shown: 0 })).split("\n");
+  while (lines.length > 1 && lines.join("\n").length > limit) lines.pop();
+  return lines.join("\n").slice(0, limit);
+}
+
+/**
+ * Leave out optional sections, least important (highest priority number) first, then put back
+ * whatever still fits, most important first. Returns the text, or null if it can't fit.
+ */
+function fitSections(sections, limit) {
   const keep = new Set(sections);
   const text = () => sections.filter(s => keep.has(s)).map(s => s.text).join("\n");
   const dropOrder = sections.filter(s => s.priority > 0).sort((a, b) => b.priority - a.priority);
@@ -194,26 +214,27 @@ export function buildMarkdown(summary, { limit = DISCORD_LIMIT } = {}) {
     keep.delete(s);
     dropped.push(s);
   }
-  // Put back whatever still fits, most important first
   for (const s of dropped.sort((a, b) => a.priority - b.priority)) {
     keep.add(s);
     if (text().length > limit) keep.delete(s);
   }
   const out = text();
-  return out.length <= limit ? out : `${out.slice(0, limit - 1)}…`;
+  return out.length <= limit ? out : null;
 }
 
+const TITLE_LIMIT = 100;
 const NOTES_LIMIT = 600;
 
-function markdownSections(s, { maxItems }) {
+function markdownSections(s, { maxItems, descriptions = true, shown = Infinity }) {
   const out = [];
   const add = (priority, text) => { if (text) out.push({ priority, text }); };
   const top = (list, n = maxItems) => list.slice(0, n);
   const date = new Date(s.session.startedAt).toLocaleDateString(game.i18n.lang || "en", { weekday: "short", day: "numeric", month: "short", year: "numeric" });
 
   // Header
-  const title = s.session.title
-    ? t("Md.TitleNamed", { n: s.session.number, title: s.session.title })
+  const sessionTitle = String(s.session.title ?? "").trim();
+  const title = sessionTitle
+    ? t("Md.TitleNamed", { n: s.session.number, title: sessionTitle.length > TITLE_LIMIT ? `${sessionTitle.slice(0, TITLE_LIMIT - 1)}…` : sessionTitle })
     : t("Md.Title", { n: s.session.number });
   add(0, `## 📜 ${title}\n*${date} · ${formatDuration(s.session.durationMinutes * 60_000)}*`);
 
@@ -277,9 +298,12 @@ function markdownSections(s, { maxItems }) {
     add(6, detail.map(l => `-# ${l}`).join("\n"));
   }
 
-  // Achievements: one per character, always shown
+  // Achievements: one per character, always shown (whole entries; see buildMarkdown)
   if (s.achievements.length) {
-    const lines = s.achievements.map(a => `${a.emoji} **${a.character}** — *${a.title}* · ${a.text}\n-# ${a.description}`);
+    const list = s.achievements.slice(0, shown);
+    const lines = list.map(a => `${a.emoji} **${a.character}** — *${a.title}* · ${a.text}${descriptions ? `\n-# ${a.description}` : ""}`);
+    const more = s.achievements.length - list.length;
+    if (more > 0) lines.push(`-# ${tp("Md.MoreAchievements", more, { n: more })}`);
     add(0, `\n**🏅 ${t("Md.Achievements")}**\n${lines.join("\n")}`);
   }
 

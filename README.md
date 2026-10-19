@@ -142,7 +142,7 @@ Natural 1s: Thorin ×5
 > The party rang the drowned bell. Next: the Ossuary.
 ```
 
-When a session has a lot going on, lists get shorter first and then the least important sections (subtext dice lines, rests, distance, biggest hit, damage) are left out, so the text always fits one message.
+When a session has a lot going on, the text is shortened step by step until it fits one message: lists get shorter first, then the least important sections (subtext dice lines, rests, distance, biggest hit, damage) are left out, then the achievement descriptions. Only for a very large party are the last achievements left out, with a line saying how many more there are. An achievement is never cut in the middle, and the JSON always has all of them.
 
 ### JSON layout (`schema: 1`)
 
