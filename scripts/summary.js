@@ -279,7 +279,7 @@ function markdownSections(s, { maxItems }) {
 
   // Achievements: one per character, always shown
   if (s.achievements.length) {
-    const lines = s.achievements.map(a => `${a.emoji} **${a.character}** — *${a.title}* · ${a.text}`);
+    const lines = s.achievements.map(a => `${a.emoji} **${a.character}** — *${a.title}* · ${a.text}\n-# ${a.description}`);
     add(0, `\n**🏅 ${t("Md.Achievements")}**\n${lines.join("\n")}`);
   }
 

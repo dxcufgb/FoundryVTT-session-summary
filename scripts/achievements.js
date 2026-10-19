@@ -24,7 +24,8 @@ const active = c => c.rolls > 0 || c.distance > 0 || c.damageDealt > 0 || c.dama
 
 /**
  * The achievements. `value(c, ctx)` returns a number (or null when it doesn't apply);
- * `text(c, ctx, value)` is the line shown under the title.
+ * `text(c, ctx, value)` is the stat shown after the title. Every achievement also has a
+ * `DXSS.Achievement.<id>.Desc` sentence saying what it is awarded for.
  */
 export const ACHIEVEMENTS = [
   // ---- The party's best (or worst) at something -------------------------------------------
@@ -217,6 +218,7 @@ export function assignAchievements(characters, { kills = [], combats = 0, scenes
       emoji: a.emoji,
       title: t(`${a.id}.Title`),
       text: a.text(c, ctx, value),
+      description: t(`${a.id}.Desc`),
       priority: a.priority
     };
   }).sort((a, b) => b.priority - a.priority || a.character.localeCompare(b.character))

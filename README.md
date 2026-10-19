@@ -52,7 +52,7 @@ The newest hit within the last minute counts. Summons, familiars and companions 
 
 ### Achievements
 
-Every character in the session gets **exactly one** achievement, and no two characters get the same one. That includes characters who did nothing: every logged-in player's character is on the list. The rare and funny ones are handed out first whenever someone qualifies. Everyone else gets the best one that is true for them. A title is only repeated when a party is so big that every one is taken.
+Every character in the session gets **exactly one** achievement, shown with a short sentence saying what it is for (the small grey line under it in Discord), and no two characters get the same one. That includes characters who did nothing: every logged-in player's character is on the list. The rare and funny ones are handed out first whenever someone qualifies. Everyone else gets the best one that is true for them. A title is only repeated when a party is so big that every one is taken.
 
 | | Achievement | Who gets it |
 | --- | --- | --- |
@@ -129,10 +129,15 @@ Natural 1s: Thorin ×5
 
 **🏅 Achievements**
 😇 **Lyra** — *Session's Blessed* · 4 natural 20s
+-# Rolled the most natural 20s in the party.
 🐈‍⬛ **Thorin** — *Session's Unluckiest* · 5 natural 1s
+-# Rolled the most natural 1s in the party.
 ✨ **Aldric** — *Death Defier* · natural 20 on a death save
+-# Rolled a natural 20 on a death saving throw and got back on their feet.
 💥 **Vex** — *Heavy Hitter* · 38 damage in one roll (Rapier)
+-# Rolled the biggest single damage roll of the session.
 👻 **Pip** — *Untouchable* · no damage taken in 4 fights
+-# Didn't take a single point of damage, even though there were fights.
 
 > The party rang the drowned bell. Next: the Ossuary.
 ```
@@ -178,7 +183,7 @@ When a session has a lot going on, lists get shorter first and then the least im
     "ones": 9, "maxRolls": 6,
     "dice": { "d12": { "rolled": 14, "ones": 2, "max": 3, "average": 6.1 }, "d20": { "rolled": 30, "ones": 5, "max": 1, "average": 9.8 } }
   }],
-  "achievements": [{ "actorId": "…", "character": "Thorin", "player": "Anna", "id": "unluckiest", "emoji": "🐈‍⬛", "title": "Session's Unluckiest", "text": "5 natural 1s" }],
+  "achievements": [{ "actorId": "…", "character": "Thorin", "player": "Anna", "id": "unluckiest", "emoji": "🐈‍⬛", "title": "Session's Unluckiest", "text": "5 natural 1s", "description": "Rolled the most natural 1s in the party." }],
   "kills": [{ "at": "…", "target": "Goblin", "cr": 0.25, "by": "Thorin", "via": null, "killer": null, "item": "Greataxe", "guessed": false, "scene": "Sunken Gate", "round": 2 }],
   "downs": [{ "at": "…", "character": "Aldric", "by": "Ogre", "scene": "Ossuary" }],
   "combats": [{ "scene": "Sunken Gate", "startedAt": "…", "endedAt": "…", "minutes": 18, "rounds": 4, "enemies": [{ "name": "Goblin", "count": 5 }] }],
