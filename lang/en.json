@@ -29,6 +29,10 @@
       "Folder": {
         "Name": "Export folder",
         "Hint": "Folder inside Foundry's Data folder for the summary files. A bot on the same computer reads them from here (e.g. %LOCALAPPDATA%/FoundryVTT/Data/session-summaries)."
+      },
+      "SetupReminder": {
+        "Name": "Remind me when returning to setup",
+        "Hint": "When the GM returns to setup while a session is being recorded, ask whether to end it first so its summary is written."
       }
     },
     "Notify": {
@@ -40,7 +44,8 @@
       "Ended": "Session {n} ended.",
       "Exported": "Session summary written to {path}",
       "ExportFailed": "Could not write the session summary: {error}",
-      "Copied": "Copied to the clipboard."
+      "Copied": "Copied to the clipboard.",
+      "ExportFailedStay": "The session is ended, but its summary could not be written, so the world stays open. Try Export now in the Session Summary window, then return to setup."
     },
     "Dialog": {
       "Start": {
@@ -61,6 +66,15 @@
         "EndNew": "End it, start a new one",
         "Continue": "Continue it",
         "Later": "Decide later"
+      },
+      "Setup": {
+        "Title": "Session still being recorded",
+        "Content": "<strong>Session {n}</strong> is still being recorded. End it now, so its summary is written for your Discord bot before the world closes?",
+        "ContentNoExport": "<strong>Session {n}</strong> is still being recorded. End it now, before the world closes?",
+        "Hint": "If you return without ending it, the session stays open and continues the next time the world is launched.",
+        "End": "End session and return to setup",
+        "Keep": "Return without ending",
+        "Stay": "Stay in the world"
       }
     },
     "Window": {

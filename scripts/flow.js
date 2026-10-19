@@ -36,7 +36,11 @@ export async function pauseSession(paused) {
   ui.notifications.info(paused ? "DXSS.Notify.Paused" : "DXSS.Notify.Resumed", { localize: true });
 }
 
-/** End the session (asks first) and export it if "Export when the session ends" is on. */
+/**
+ * End the session (asks first) and export it if "Export when the session ends" is on.
+ * Returns false when nothing was ended, otherwise { ended: true, exported } where `exported` is
+ * true / false (written / failed) or null (automatic export is off).
+ */
 export async function endSession({ confirm = true } = {}) {
   if (!requireActiveGM() || !state.isOpen()) return false;
   if (confirm) {
@@ -48,7 +52,60 @@ export async function endSession({ confirm = true } = {}) {
   }
   await state.end();
   ui.notifications.info(F("DXSS.Notify.Ended", { n: state.getSession().number }));
-  if (game.settings.get(MODULE_ID, "autoExport")) await exportNow();
+  const exported = game.settings.get(MODULE_ID, "autoExport") ? !!(await exportNow()) : null;
+  return { ended: true, exported };
+}
+
+/* -------------------------------------------- */
+/*  Return to Setup                             */
+/* -------------------------------------------- */
+
+/**
+ * "Return to Setup" (the Settings sidebar button and the main menu entry) both call
+ * game.shutDown(). Wrap it: when the active GM leaves while a session is open, ask whether to end
+ * the session first, so its summary is written before the world closes.
+ */
+export function guardReturnToSetup() {
+  const original = game.shutDown;
+  if (typeof original !== "function" || original.dxssGuarded) return;
+  const guarded = async function (...args) {
+    let leave = true;
+    try {
+      leave = await confirmLeaving();
+    } catch (err) {
+      console.error(`${MODULE_ID} | return-to-setup reminder failed`, err); // never block leaving because of us
+    }
+    if (!leave) return;
+    return original.apply(this, args);
+  };
+  guarded.dxssGuarded = true;
+  game.shutDown = guarded;
+}
+
+/** Ask about the open session. Resolves to true to go on to setup, false to stay in the world. */
+async function confirmLeaving() {
+  if (!game.settings.get(MODULE_ID, "setupReminder")) return true;
+  if (!game.user.isActiveGM || !state.isOpen()) return true;
+  const session = state.getSession();
+  const autoExport = game.settings.get(MODULE_ID, "autoExport");
+  const content = autoExport ? "DXSS.Dialog.Setup.Content" : "DXSS.Dialog.Setup.ContentNoExport";
+  const choice = await Dialog().wait({
+    window: { title: "DXSS.Dialog.Setup.Title", icon: "fa-solid fa-scroll" },
+    content: `<p>${F(content, { n: session.number })}</p><p class="hint">${L("DXSS.Dialog.Setup.Hint")}</p>`,
+    buttons: [
+      { action: "end", label: "DXSS.Dialog.Setup.End", icon: "fa-solid fa-flag-checkered", default: true },
+      { action: "keep", label: "DXSS.Dialog.Setup.Keep", icon: "fa-solid fa-door-open" },
+      { action: "stay", label: "DXSS.Dialog.Setup.Stay", icon: "fa-solid fa-xmark" }
+    ]
+  }); // closing the dialog resolves to null; an error goes to the caller, which lets the GM leave
+  if (choice === "keep") return true;
+  if (choice !== "end") return false; // "Stay" or the dialog was closed
+  const result = await endSession({ confirm: false });
+  if (result?.exported === false) {
+    // The session is ended and saved in the world, but its files are missing: don't leave yet.
+    ui.notifications.error(L("DXSS.Notify.ExportFailedStay"), { permanent: true });
+    return false;
+  }
   return true;
 }
 

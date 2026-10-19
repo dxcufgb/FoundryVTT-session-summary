@@ -23,6 +23,7 @@ Recording runs on the **active GM's** client. Players don't need to do anything.
 - When the GM logs in, the module asks whether to start recording **Session N** (change this in the settings to start automatically, or never).
 - **Token controls → 📜 Session Summary** opens the window: live stats, title, GM notes, the Discord text, **Pause**, **End session**, **Export now** and downloads.
 - **End session** stops recording and writes the files. The session number then goes up by one.
+- **Return to Setup** with a session still open asks first: **End session and return to setup** (the summary is written before the world closes), **Return without ending** (the session continues the next time the world is launched) or **Stay in the world**. If the summary can't be written, the world stays open so nothing is lost. Turn this off with **Remind me when returning to setup**.
 - Reloading, crashing or switching GMs mid-session loses nothing: the session is saved in the world every 20 seconds. Time while Foundry is closed doesn't count towards the session length.
 - If a session was never ended and the GM logs in hours later, the module asks whether it's a new session.
 
@@ -226,6 +227,7 @@ watch(dir, (event, file) => {
 | Next session number | 1 | Set it once to continue your campaign's numbering |
 | Start recording | Ask the GM | Ask / start automatically / only from the window |
 | Export when the session ends | on | Write the files as soon as the session ends |
+| Remind me when returning to setup | on | Ask to end an open session when the GM returns to setup |
 | Export folder | `session-summaries` | Folder inside the Data folder |
 
 ## Macro API
@@ -235,7 +237,7 @@ const ss = game.modules.get("dxcufgbs-session-summary").api;
 ss.open();               // the Session Summary window
 ss.start();              // start recording
 ss.pause(true);          // pause (false resumes)
-await ss.end();          // end (asks), then export if the setting is on
+await ss.end();          // end (asks), then export if the setting is on → { ended, exported } or false
 await ss.export();       // write the files now → { summary, files }
 ss.getSummary();         // the summary as it would be exported right now
 ```
