@@ -1,0 +1,314 @@
+{
+  "DXSS": {
+    "Title": "Session Summary",
+    "Unattributed": "Unattributed",
+    "Control": {
+      "Open": "Session Summary"
+    },
+    "State": {
+      "recording": "Recording",
+      "paused": "Paused",
+      "ended": "Ended"
+    },
+    "Settings": {
+      "NextNumber": {
+        "Name": "Next session number",
+        "Hint": "The number the next session gets. Goes up by one every time a session ends. Set it to continue your campaign's numbering."
+      },
+      "AutoStart": {
+        "Name": "Start recording",
+        "Hint": "What happens when the GM logs in and no session is being recorded.",
+        "Ask": "Ask the GM",
+        "Always": "Start automatically",
+        "Never": "Only from the Session Summary window"
+      },
+      "AutoExport": {
+        "Name": "Export when the session ends",
+        "Hint": "Write the summary files into the Data folder as soon as the GM ends the session."
+      },
+      "Folder": {
+        "Name": "Export folder",
+        "Hint": "Folder inside Foundry's Data folder for the summary files. A bot on the same computer reads them from here (e.g. %LOCALAPPDATA%/FoundryVTT/Data/session-summaries)."
+      }
+    },
+    "Notify": {
+      "NotActiveGM": "Only the active GM ({name}) records and changes the session.",
+      "Started": "Session {n} is being recorded.",
+      "Continuing": "Session Summary: still recording session {n}.",
+      "Paused": "Session recording paused.",
+      "Resumed": "Session recording resumed.",
+      "Ended": "Session {n} ended.",
+      "Exported": "Session summary written to {path}",
+      "ExportFailed": "Could not write the session summary: {error}",
+      "Copied": "Copied to the clipboard."
+    },
+    "Dialog": {
+      "Start": {
+        "Title": "Start recording?",
+        "Content": "Start recording <strong>session {n}</strong>? Kills, dice, scenes and movement are counted until you end the session."
+      },
+      "End": {
+        "Title": "End session",
+        "Content": "End <strong>session {n}</strong>? Recording stops and the summary is written for your bot."
+      },
+      "Discard": {
+        "Title": "Discard session",
+        "Content": "Throw away everything recorded in this session? Files that were already exported stay."
+      },
+      "Stale": {
+        "Title": "Session still open",
+        "Content": "<strong>Session {n}</strong> was never ended (last activity {since}). Is this a new session?",
+        "EndNew": "End it, start a new one",
+        "Continue": "Continue it",
+        "Later": "Decide later"
+      }
+    },
+    "Window": {
+      "NotActiveGM": "Read only: the session is recorded by the active GM,",
+      "Session": "Session",
+      "Title": "Title",
+      "TitlePlaceholder": "The Drowned Crypt",
+      "Notes": "GM notes (shown at the end of the Discord text)",
+      "NotesPlaceholder": "Highlights, cliffhanger, MVP…",
+      "Characters": "Characters",
+      "Dice": "Dice",
+      "DiceHint": "Player rolls only. Per die: max results / 1s. Only the kept die of advantage and disadvantage counts.",
+      "Scenes": "Scenes",
+      "Kills": "Killing blows",
+      "Guessed": "No attack or damage card named the attacker: credited to whoever's turn it was.",
+      "Preview": "Discord text",
+      "NothingYet": "Nothing yet.",
+      "NoSession": "No session is being recorded.",
+      "NoSessionHint": "Recording runs on the active GM's client. Players don't need to do anything.",
+      "Achievements": "Achievements",
+      "AchievementsHint": "Everyone gets one. Shown for the session so far; it can still change until the session ends."
+    },
+    "Tile": {
+      "Kills": "Enemies slain",
+      "Combats": "Fights",
+      "Rounds": "Rounds",
+      "Nat20": "Natural 20s",
+      "Nat1": "Natural 1s",
+      "Scenes": "Scenes"
+    },
+    "Col": {
+      "Character": "Character",
+      "KillsHint": "Killing blows",
+      "Dealt": "Dealt",
+      "Taken": "Taken",
+      "Healing": "Healed",
+      "Downs": "Downed",
+      "Distance": "Walked",
+      "Player": "Player",
+      "Rolls": "Rolls",
+      "D20Avg": "d20 avg",
+      "Nat20": "Nat 20",
+      "Nat1": "Nat 1",
+      "PerDie": "Max / 1s per die"
+    },
+    "Button": {
+      "StartNext": "Start session",
+      "Pause": "Pause",
+      "Resume": "Resume",
+      "End": "End session",
+      "Export": "Export now",
+      "Copy": "Copy",
+      "Discard": "Discard this session"
+    },
+    "Time": {
+      "Minutes": "{m} min",
+      "Hours": "{h} h",
+      "HoursMinutes": "{h} h {m} min"
+    },
+    "Md": {
+      "Title": "Session {n}",
+      "TitleNamed": "Session {n} — {title}",
+      "Combat": "Combat",
+      "CombatLine": "enemies slain: {kills} · fights: {combats} · rounds: {rounds}",
+      "KillingBlows": "Killing blows",
+      "OtherKills": "+{n} not by the party",
+      "DamageDealt": "Damage dealt",
+      "BiggestHit": "Biggest hit",
+      "Downed": "Fallen heroes",
+      "DownedBy": "{name} (by {by})",
+      "Scenes": "Scenes",
+      "Distance": "Distance walked",
+      "Rests": "Rests",
+      "ShortRests": "{n} short",
+      "LongRests": "{n} long",
+      "Dice": "Dice",
+      "Nat20s": "Natural 20s",
+      "Nat1s": "Natural 1s",
+      "DiceLine": "d20 avg {avg} · max rolls {max} · 1s {ones} · {rolls} rolls",
+      "Achievements": "Achievements"
+    },
+    "Achievement": {
+      "blessed": {
+        "Title": "Session's Blessed",
+        "Text": "{n} natural 20s",
+        "TextOne": "1 natural 20"
+      },
+      "unluckiest": {
+        "Title": "Session's Unluckiest",
+        "Text": "{n} natural 1s",
+        "TextOne": "1 natural 1"
+      },
+      "giantSlayer": {
+        "Title": "Giant Slayer",
+        "Text": "slew {target} (CR {cr})"
+      },
+      "executioner": {
+        "Title": "Executioner",
+        "Text": "{n} killing blows",
+        "TextOne": "1 killing blow"
+      },
+      "medic": {
+        "Title": "Field Medic",
+        "Text": "healed {n} HP"
+      },
+      "heavyHitter": {
+        "Title": "Heavy Hitter",
+        "Text": "{n} damage in one roll",
+        "TextItem": "{n} damage in one roll ({item})"
+      },
+      "meatShield": {
+        "Title": "Meat Shield",
+        "Text": "took {n} damage"
+      },
+      "floorInspector": {
+        "Title": "Floor Inspector",
+        "Text": "dropped to 0 HP {n} times",
+        "TextOne": "dropped to 0 HP"
+      },
+      "friendlyFire": {
+        "Title": "Friendly Fire",
+        "Text": "{n} damage to allies"
+      },
+      "wreckingBall": {
+        "Title": "Wrecking Ball",
+        "Text": "dealt {n} damage"
+      },
+      "sharpshooter": {
+        "Title": "Sharpshooter",
+        "Text": "hit {hits} of {n} attacks"
+      },
+      "stormtrooper": {
+        "Title": "Stormtrooper",
+        "Text": "missed {n} attacks"
+      },
+      "hotDice": {
+        "Title": "Hot Dice",
+        "Text": "d20 average {n}"
+      },
+      "coldDice": {
+        "Title": "Cold Dice",
+        "Text": "d20 average {n}"
+      },
+      "ironWill": {
+        "Title": "Iron Will",
+        "Text": "passed {n} saving throws"
+      },
+      "weakKnees": {
+        "Title": "Weak Knees",
+        "Text": "failed {n} saving throws"
+      },
+      "maxPower": {
+        "Title": "Max Power",
+        "Text": "{n} max results"
+      },
+      "snakeEyes": {
+        "Title": "Snake Eyes",
+        "Text": "rolled {n} ones"
+      },
+      "wanderer": {
+        "Title": "Wanderer",
+        "Text": "walked {n} {units}"
+      },
+      "diceGoblin": {
+        "Title": "Dice Goblin",
+        "Text": "{n} rolls"
+      },
+      "homebody": {
+        "Title": "Homebody",
+        "Text": "walked only {n} {units}"
+      },
+      "deathDefier": {
+        "Title": "Death Defier",
+        "Text": "natural 20 on a death save"
+      },
+      "beastmaster": {
+        "Title": "Beastmaster",
+        "Text": "{via} landed {n} killing blows",
+        "TextOne": "{via} landed a killing blow"
+      },
+      "firstBlood": {
+        "Title": "First Blood",
+        "Text": "{target} fell first"
+      },
+      "closer": {
+        "Title": "The Closer",
+        "Text": "finished off {target}"
+      },
+      "butterfingers": {
+        "Title": "Butterfingers",
+        "Text": "natural 1 on {n} attacks",
+        "TextOne": "natural 1 on an attack"
+      },
+      "untouchable": {
+        "Title": "Untouchable",
+        "Text": "no damage taken in {n} fights",
+        "TextOne": "no damage taken in the fight"
+      },
+      "luckyStreak": {
+        "Title": "Lucky Streak",
+        "Text": "{n} natural 20s"
+      },
+      "pacifist": {
+        "Title": "Pacifist",
+        "Text": "dealt no damage"
+      },
+      "perfectlyAverage": {
+        "Title": "Perfectly Average",
+        "Text": "d20 average {n}"
+      },
+      "quietOne": {
+        "Title": "The Quiet One",
+        "Text": "only {n} rolls all session",
+        "TextOne": "a single roll all session",
+        "TextNone": "didn't roll a single die"
+      },
+      "teamPlayer": {
+        "Title": "Team Player",
+        "Text": "there for all {n} fights",
+        "TextOne": "there for the fight",
+        "TextNone": "had the party's back"
+      },
+      "sightseer": {
+        "Title": "Sightseer",
+        "Text": "saw {n} scenes",
+        "TextOne": "took in the scenery",
+        "TextNone": "took in the scenery"
+      },
+      "steadfast": {
+        "Title": "Steadfast",
+        "Text": "held the line"
+      },
+      "moralSupport": {
+        "Title": "Moral Support",
+        "Text": "cheered the party on"
+      },
+      "mainCharacter": {
+        "Title": "Main Character",
+        "Text": "the story revolves around them"
+      },
+      "snackKeeper": {
+        "Title": "Keeper of Snacks",
+        "Text": "kept the party fed"
+      },
+      "alongForTheRide": {
+        "Title": "Along for the Ride",
+        "Text": "enjoyed the journey"
+      }
+    }
+  }
+}

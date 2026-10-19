@@ -1,0 +1,186 @@
+<div class="dxss-wrap">
+  {{#unless isActiveGM}}
+  <p class="dxss-warning"><i class="fa-solid fa-triangle-exclamation"></i> {{localize "DXSS.Window.NotActiveGM"}} <strong>{{activeGM}}</strong></p>
+  {{/unless}}
+
+  {{#if hasSession}}
+  <header class="dxss-head">
+    <div class="dxss-status dxss-{{state}}">
+      <span class="dxss-dot"></span>
+      <span>{{stateLabel}}</span>
+    </div>
+    <div class="dxss-meta">
+      <strong>{{localize "DXSS.Window.Session"}} {{session.number}}</strong>
+      <span><i class="fa-regular fa-clock"></i> {{duration}}</span>
+      <span><i class="fa-regular fa-calendar"></i> {{started}}</span>
+      {{#if currentScene}}<span><i class="fa-solid fa-location-dot"></i> {{currentScene}}</span>{{/if}}
+    </div>
+    <div class="dxss-buttons">
+      {{#if open}}
+        {{#if paused}}
+        <button type="button" data-action="resume"><i class="fa-solid fa-play"></i> {{localize "DXSS.Button.Resume"}}</button>
+        {{else}}
+        <button type="button" data-action="pause"><i class="fa-solid fa-pause"></i> {{localize "DXSS.Button.Pause"}}</button>
+        {{/if}}
+        <button type="button" class="dxss-primary" data-action="end"><i class="fa-solid fa-flag-checkered"></i> {{localize "DXSS.Button.End"}}</button>
+      {{else}}
+        <button type="button" class="dxss-primary" data-action="start"><i class="fa-solid fa-circle-play"></i> {{localize "DXSS.Button.StartNext"}} {{nextNumber}}</button>
+      {{/if}}
+    </div>
+  </header>
+
+  <div class="dxss-body">
+    <section class="dxss-fields">
+      <label>{{localize "DXSS.Window.Title"}}
+        <input type="text" data-field="title" value="{{session.title}}" placeholder="{{localize "DXSS.Window.TitlePlaceholder"}}" {{#unless isActiveGM}}disabled{{/unless}}>
+      </label>
+      <label>{{localize "DXSS.Window.Notes"}}
+        <textarea data-field="notes" rows="2" placeholder="{{localize "DXSS.Window.NotesPlaceholder"}}" {{#unless isActiveGM}}disabled{{/unless}}>{{session.notes}}</textarea>
+      </label>
+    </section>
+
+    <section class="dxss-tiles">
+      {{#each tiles}}
+      <div class="dxss-tile {{cls}}">
+        <i class="{{icon}}"></i>
+        <span class="dxss-value">{{value}}</span>
+        <span class="dxss-label">{{label}}</span>
+      </div>
+      {{/each}}
+    </section>
+
+    {{#if achievements.length}}
+    <section>
+      <h3><i class="fa-solid fa-medal"></i> {{localize "DXSS.Window.Achievements"}}</h3>
+      <div class="dxss-achievements">
+        {{#each achievements}}
+        <div class="dxss-achievement">
+          <span class="dxss-emoji">{{emoji}}</span>
+          <div>
+            <strong>{{character}}</strong>
+            <span class="dxss-ach-title">{{title}}</span>
+            <span class="dxss-dim">{{text}}</span>
+          </div>
+        </div>
+        {{/each}}
+      </div>
+      {{#if open}}<p class="hint">{{localize "DXSS.Window.AchievementsHint"}}</p>{{/if}}
+    </section>
+    {{/if}}
+
+    <section>
+      <h3><i class="fa-solid fa-users"></i> {{localize "DXSS.Window.Characters"}}</h3>
+      {{#if characters.length}}
+      <table class="dxss-table">
+        <thead><tr>
+          <th>{{localize "DXSS.Col.Character"}}</th>
+          <th title="{{localize "DXSS.Col.KillsHint"}}"><i class="fa-solid fa-skull"></i></th>
+          <th>{{localize "DXSS.Col.Dealt"}}</th>
+          <th>{{localize "DXSS.Col.Taken"}}</th>
+          <th>{{localize "DXSS.Col.Healing"}}</th>
+          <th>{{localize "DXSS.Col.Downs"}}</th>
+          <th>{{localize "DXSS.Col.Distance"}}</th>
+          <th class="good">20</th>
+          <th class="bad">1</th>
+        </tr></thead>
+        <tbody>
+          {{#each characters}}
+          <tr>
+            <td><strong>{{name}}</strong>{{#if player}} <span class="dxss-dim">{{player}}</span>{{/if}}</td>
+            <td class="num"><strong>{{kills}}</strong></td>
+            <td class="num">{{damageDealt}}</td>
+            <td class="num">{{damageTaken}}</td>
+            <td class="num">{{healingDone}}</td>
+            <td class="num">{{downs}}</td>
+            <td class="num">{{distance}}</td>
+            <td class="num good">{{nat20}}</td>
+            <td class="num bad">{{nat1}}</td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+      {{else}}<p class="dxss-empty">{{localize "DXSS.Window.NothingYet"}}</p>{{/if}}
+    </section>
+
+    <section>
+      <h3><i class="fa-solid fa-dice"></i> {{localize "DXSS.Window.Dice"}}</h3>
+      {{#if players.length}}
+      <table class="dxss-table">
+        <thead><tr>
+          <th>{{localize "DXSS.Col.Player"}}</th>
+          <th>{{localize "DXSS.Col.Rolls"}}</th>
+          <th>{{localize "DXSS.Col.D20Avg"}}</th>
+          <th class="good">{{localize "DXSS.Col.Nat20"}}</th>
+          <th class="bad">{{localize "DXSS.Col.Nat1"}}</th>
+          <th>{{localize "DXSS.Col.PerDie"}}</th>
+        </tr></thead>
+        <tbody>
+          {{#each players}}
+          <tr>
+            <td>{{label}}</td>
+            <td class="num">{{rolls}}</td>
+            <td class="num">{{#if d20.average}}{{d20.average}}{{else}}–{{/if}}</td>
+            <td class="num good">{{d20.nat20}}</td>
+            <td class="num bad">{{d20.nat1}}</td>
+            <td class="dxss-dice">
+              {{#each diceList}}
+              <span class="dxss-die" title="{{rolled}} × {{die}}">{{die}} <b class="good">{{max}}</b>/<b class="bad">{{ones}}</b></span>
+              {{/each}}
+            </td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+      <p class="hint">{{localize "DXSS.Window.DiceHint"}}</p>
+      {{else}}<p class="dxss-empty">{{localize "DXSS.Window.NothingYet"}}</p>{{/if}}
+    </section>
+
+    <div class="dxss-columns">
+      <section>
+        <h3><i class="fa-solid fa-map"></i> {{localize "DXSS.Window.Scenes"}}</h3>
+        {{#if scenes.length}}
+        <ol class="dxss-scenes">
+          {{#each scenes}}
+          <li class="{{#if current}}current{{/if}}"><span>{{name}}</span> <span class="dxss-dim">{{time}}</span></li>
+          {{/each}}
+        </ol>
+        {{else}}<p class="dxss-empty">{{localize "DXSS.Window.NothingYet"}}</p>{{/if}}
+      </section>
+      <section>
+        <h3><i class="fa-solid fa-skull-crossbones"></i> {{localize "DXSS.Window.Kills"}}</h3>
+        {{#if kills.length}}
+        <ul class="dxss-kills">
+          {{#each kills}}
+          <li><span class="dxss-dim">{{time}}</span> <strong>{{byLabel}}</strong> → {{target}}{{#if item}} <span class="dxss-dim">({{item}})</span>{{/if}}{{#if guessed}} <i class="fa-solid fa-circle-question dxss-dim" title="{{localize "DXSS.Window.Guessed"}}"></i>{{/if}}</li>
+          {{/each}}
+        </ul>
+        {{else}}<p class="dxss-empty">{{localize "DXSS.Window.NothingYet"}}</p>{{/if}}
+      </section>
+    </div>
+
+    <section>
+      <h3><i class="fa-brands fa-discord"></i> {{localize "DXSS.Window.Preview"}} <span class="dxss-dim">{{markdownLength}} / 2000</span>
+        <button type="button" class="dxss-small" data-action="copy"><i class="fa-regular fa-copy"></i> {{localize "DXSS.Button.Copy"}}</button>
+      </h3>
+      <pre class="dxss-preview">{{markdown}}</pre>
+    </section>
+  </div>
+
+  <footer class="dxss-foot">
+    <span class="dxss-dim"><i class="fa-regular fa-folder-open"></i> Data/{{folder}}/</span>
+    <span class="dxss-spacer"></span>
+    <button type="button" data-action="export" {{#unless isActiveGM}}disabled{{/unless}}><i class="fa-solid fa-file-export"></i> {{localize "DXSS.Button.Export"}}</button>
+    <button type="button" data-action="downloadJson"><i class="fa-solid fa-download"></i> JSON</button>
+    <button type="button" data-action="downloadMd"><i class="fa-solid fa-download"></i> MD</button>
+    <button type="button" data-action="discard" class="dxss-danger" title="{{localize "DXSS.Button.Discard"}}" {{#unless isActiveGM}}disabled{{/unless}}><i class="fa-solid fa-trash"></i></button>
+  </footer>
+
+  {{else}}
+  <div class="dxss-none">
+    <i class="fa-solid fa-scroll"></i>
+    <p>{{localize "DXSS.Window.NoSession"}}</p>
+    <button type="button" class="dxss-primary" data-action="start" {{#unless isActiveGM}}disabled{{/unless}}><i class="fa-solid fa-circle-play"></i> {{localize "DXSS.Button.StartNext"}} {{nextNumber}}</button>
+    <p class="hint">{{localize "DXSS.Window.NoSessionHint"}}</p>
+  </div>
+  {{/if}}
+</div>
