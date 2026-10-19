@@ -20,7 +20,7 @@ import { MODULE_ID } from "./constants.js";
 import * as state from "./state.js";
 import { registerTrackers, restoreKills, notePresentParty } from "./trackers.js";
 import { buildSummary } from "./summary.js";
-import { startSession, endSession, pauseSession, exportNow, readyCheck } from "./flow.js";
+import { startSession, endSession, pauseSession, exportNow, readyCheck, guardReturnToSetup } from "./flow.js";
 import { SessionSummaryApp } from "./app.js";
 
 /* -------------------------------------------- */
@@ -50,6 +50,10 @@ Hooks.once("init", () => {
   });
   game.settings.register(MODULE_ID, "autoExport", {
     name: "DXSS.Settings.AutoExport.Name", hint: "DXSS.Settings.AutoExport.Hint",
+    scope: "world", config: true, type: Boolean, default: true
+  });
+  game.settings.register(MODULE_ID, "setupReminder", {
+    name: "DXSS.Settings.SetupReminder.Name", hint: "DXSS.Settings.SetupReminder.Hint",
     scope: "world", config: true, type: Boolean, default: true
   });
   game.settings.register(MODULE_ID, "folder", {
@@ -91,6 +95,7 @@ Hooks.once("setup", () => {
 Hooks.once("ready", async () => {
   state.load();
   restoreKills();
+  if (game.user.isGM) guardReturnToSetup();
   if (!game.user.isActiveGM) return;
   if (state.isOpen() && game.scenes.active) state.setScene(game.scenes.active);
   notePresentParty();

@@ -9,5 +9,6 @@
 - Fights (rounds, enemies), short and long rests, distance walked per character, the scenes the party spent time in.
 - Achievements: every character in the session gets exactly one, and no two the same (Session's Blessed, Session's Unluckiest, Death Defier, Giant Slayer, Executioner, Field Medic, Stormtrooper, Floor Inspector and 30 more). Every logged-in player's character counts, even if it did nothing.
 - Per character: hits and misses (against the target's AC), saves passed and failed (against the DC), d20 average, 1s and max results.
+- Returning to setup with a session still open asks whether to end it first, so its summary is written before the world closes (setting: Remind me when returning to setup).
 - Session Summary window (Token controls): start, pause, end, title, GM notes, live stats, Discord preview, export, download.
 - Export to `Data/session-summaries/`: `session-NNN_DATE.json` / `.md`, `latest.json` / `latest.md` and `index.json`. The Markdown always fits one Discord message (2000 characters).
