@@ -140,174 +140,214 @@
       "Nat20s": "Natural 20s",
       "Nat1s": "Natural 1s",
       "DiceLine": "d20 avg {avg} · max rolls {max} · 1s {ones} · {rolls} rolls",
-      "Achievements": "Achievements"
+      "Achievements": "Achievements",
+      "MoreAchievements": "…and {n} more achievements in the full summary",
+      "MoreAchievementsOne": "…and 1 more achievement in the full summary"
     },
     "Achievement": {
       "blessed": {
         "Title": "Session's Blessed",
         "Text": "{n} natural 20s",
-        "TextOne": "1 natural 20"
+        "TextOne": "1 natural 20",
+        "Desc": "Rolled the most natural 20s in the party."
       },
       "unluckiest": {
         "Title": "Session's Unluckiest",
         "Text": "{n} natural 1s",
-        "TextOne": "1 natural 1"
+        "TextOne": "1 natural 1",
+        "Desc": "Rolled the most natural 1s in the party."
       },
       "giantSlayer": {
         "Title": "Giant Slayer",
-        "Text": "slew {target} (CR {cr})"
+        "Text": "slew {target} (CR {cr})",
+        "Desc": "Landed the killing blow on the toughest enemy of the session (the highest challenge rating)."
       },
       "executioner": {
         "Title": "Executioner",
         "Text": "{n} killing blows",
-        "TextOne": "1 killing blow"
+        "TextOne": "1 killing blow",
+        "Desc": "Landed the most killing blows: the hit that drops an enemy to 0 HP."
       },
       "medic": {
         "Title": "Field Medic",
-        "Text": "healed {n} HP"
+        "Text": "healed {n} HP",
+        "Desc": "Healed the most HP in the party, temporary HP included."
       },
       "heavyHitter": {
         "Title": "Heavy Hitter",
         "Text": "{n} damage in one roll",
-        "TextItem": "{n} damage in one roll ({item})"
+        "TextItem": "{n} damage in one roll ({item})",
+        "Desc": "Rolled the biggest single damage roll of the session."
       },
       "meatShield": {
         "Title": "Meat Shield",
-        "Text": "took {n} damage"
+        "Text": "took {n} damage",
+        "Desc": "Took the most damage in the party."
       },
       "floorInspector": {
         "Title": "Floor Inspector",
         "Text": "dropped to 0 HP {n} times",
-        "TextOne": "dropped to 0 HP"
+        "TextOne": "dropped to 0 HP",
+        "Desc": "Dropped to 0 HP more often than anyone else."
       },
       "friendlyFire": {
         "Title": "Friendly Fire",
-        "Text": "{n} damage to allies"
+        "Text": "{n} damage to allies",
+        "Desc": "Dealt the most damage to their own allies. Oops."
       },
       "wreckingBall": {
         "Title": "Wrecking Ball",
-        "Text": "dealt {n} damage"
+        "Text": "dealt {n} damage",
+        "Desc": "Dealt the most damage to enemies."
       },
       "sharpshooter": {
         "Title": "Sharpshooter",
-        "Text": "hit {hits} of {n} attacks"
+        "Text": "hit {hits} of {n} attacks",
+        "Desc": "Had the best hit rate in the party (at least 4 attacks against a known AC)."
       },
       "stormtrooper": {
         "Title": "Stormtrooper",
-        "Text": "missed {n} attacks"
+        "Text": "missed {n} attacks",
+        "Desc": "Missed more attacks than anyone else."
       },
       "hotDice": {
         "Title": "Hot Dice",
-        "Text": "d20 average {n}"
+        "Text": "d20 average {n}",
+        "Desc": "Had the highest average on d20 rolls (at least 5 rolls)."
       },
       "coldDice": {
         "Title": "Cold Dice",
-        "Text": "d20 average {n}"
+        "Text": "d20 average {n}",
+        "Desc": "Had the lowest average on d20 rolls (at least 5 rolls)."
       },
       "ironWill": {
         "Title": "Iron Will",
-        "Text": "passed {n} saving throws"
+        "Text": "passed {n} saving throws",
+        "Desc": "Passed the most saving throws."
       },
       "weakKnees": {
         "Title": "Weak Knees",
-        "Text": "failed {n} saving throws"
+        "Text": "failed {n} saving throws",
+        "Desc": "Failed the most saving throws."
       },
       "maxPower": {
         "Title": "Max Power",
-        "Text": "{n} max results"
+        "Text": "{n} max results",
+        "Desc": "Rolled the most dice that landed on their highest number (a 6 on a d6, an 8 on a d8, …)."
       },
       "snakeEyes": {
         "Title": "Snake Eyes",
-        "Text": "rolled {n} ones"
+        "Text": "rolled {n} ones",
+        "Desc": "Rolled the most dice that landed on 1, on any kind of die."
       },
       "wanderer": {
         "Title": "Wanderer",
-        "Text": "walked {n} {units}"
+        "Text": "walked {n} {units}",
+        "Desc": "Walked the furthest across the maps."
       },
       "diceGoblin": {
         "Title": "Dice Goblin",
-        "Text": "{n} rolls"
+        "Text": "{n} rolls",
+        "Desc": "Made the most rolls in the party."
       },
       "homebody": {
         "Title": "Homebody",
-        "Text": "walked only {n} {units}"
+        "Text": "walked only {n} {units}",
+        "Desc": "Walked the least while the others roamed the maps."
       },
       "deathDefier": {
         "Title": "Death Defier",
-        "Text": "natural 20 on a death save"
+        "Text": "natural 20 on a death save",
+        "Desc": "Rolled a natural 20 on a death saving throw and got back on their feet."
       },
       "beastmaster": {
         "Title": "Beastmaster",
         "Text": "{via} landed {n} killing blows",
-        "TextOne": "{via} landed a killing blow"
+        "TextOne": "{via} landed a killing blow",
+        "Desc": "Their summon or companion landed a killing blow."
       },
       "firstBlood": {
         "Title": "First Blood",
-        "Text": "{target} fell first"
+        "Text": "{target} fell first",
+        "Desc": "Landed the first killing blow of the session."
       },
       "closer": {
         "Title": "The Closer",
-        "Text": "finished off {target}"
+        "Text": "finished off {target}",
+        "Desc": "Landed the last killing blow of the session."
       },
       "butterfingers": {
         "Title": "Butterfingers",
         "Text": "natural 1 on {n} attacks",
-        "TextOne": "natural 1 on an attack"
+        "TextOne": "natural 1 on an attack",
+        "Desc": "Rolled a natural 1 on an attack roll."
       },
       "untouchable": {
         "Title": "Untouchable",
         "Text": "no damage taken in {n} fights",
-        "TextOne": "no damage taken in the fight"
+        "TextOne": "no damage taken in the fight",
+        "Desc": "Didn't take a single point of damage, even though there were fights."
       },
       "luckyStreak": {
         "Title": "Lucky Streak",
-        "Text": "{n} natural 20s"
+        "Text": "{n} natural 20s",
+        "Desc": "Rolled two or more natural 20s."
       },
       "pacifist": {
         "Title": "Pacifist",
-        "Text": "dealt no damage"
+        "Text": "dealt no damage",
+        "Desc": "Took part but didn't deal any damage, even though there were fights."
       },
       "perfectlyAverage": {
         "Title": "Perfectly Average",
-        "Text": "d20 average {n}"
+        "Text": "d20 average {n}",
+        "Desc": "Their d20 average landed right around 10.5, the exact middle of the die."
       },
       "quietOne": {
         "Title": "The Quiet One",
         "Text": "only {n} rolls all session",
         "TextOne": "a single roll all session",
-        "TextNone": "didn't roll a single die"
+        "TextNone": "didn't roll a single die",
+        "Desc": "Rolled the dice five times or fewer all session."
       },
       "teamPlayer": {
         "Title": "Team Player",
         "Text": "there for all {n} fights",
         "TextOne": "there for the fight",
-        "TextNone": "had the party's back"
+        "TextNone": "had the party's back",
+        "Desc": "No records broken this time, but always there for the party."
       },
       "sightseer": {
         "Title": "Sightseer",
         "Text": "saw {n} scenes",
         "TextOne": "took in the scenery",
-        "TextNone": "took in the scenery"
+        "TextNone": "took in the scenery",
+        "Desc": "No records broken this time, but took in every place the party visited."
       },
       "steadfast": {
         "Title": "Steadfast",
-        "Text": "held the line"
+        "Text": "held the line",
+        "Desc": "No records broken this time, but held their ground with the party."
       },
       "moralSupport": {
         "Title": "Moral Support",
-        "Text": "cheered the party on"
+        "Text": "cheered the party on",
+        "Desc": "No records broken this time, but kept the party's spirits up."
       },
       "mainCharacter": {
         "Title": "Main Character",
-        "Text": "the story revolves around them"
+        "Text": "the story revolves around them",
+        "Desc": "No records broken this time, but every story needs one."
       },
       "snackKeeper": {
         "Title": "Keeper of Snacks",
-        "Text": "kept the party fed"
+        "Text": "kept the party fed",
+        "Desc": "No records broken this time, but someone has to keep the party fed."
       },
       "alongForTheRide": {
         "Title": "Along for the Ride",
-        "Text": "enjoyed the journey"
+        "Text": "enjoyed the journey",
+        "Desc": "No records broken this time, but along for every step of the adventure."
       }
     }
   }

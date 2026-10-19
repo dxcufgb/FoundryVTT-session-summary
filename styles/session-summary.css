@@ -58,6 +58,7 @@
 }
 .dxss-window .dxss-achievement .dxss-emoji { font-size: 1.7rem; line-height: 1; }
 .dxss-window .dxss-achievement > div { display: flex; flex-direction: column; min-width: 0; }
+.dxss-window .dxss-achievement .dxss-ach-desc { font-size: var(--font-size-11, 11px); font-style: italic; opacity: 0.75; margin-top: 0.1rem; }
 .dxss-window .dxss-achievement .dxss-ach-title { color: var(--color-warm-2, #ff8c28); font-weight: 700; font-size: var(--font-size-13, 13px); }
 
 .dxss-window .dxss-table { width: 100%; border-collapse: collapse; margin: 0; font-size: var(--font-size-13, 13px); }
