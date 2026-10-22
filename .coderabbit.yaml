@@ -1,0 +1,21 @@
+# CodeRabbit settings for FoundryVTT-session-summary.
+# Shared rules come from the central dxcufgb/coderabbit repository (inheritance: true), and CodeRabbit reads
+# the README as code guidelines. Only what is specific to this repository is here.
+# Check the merged result on a pull request with: @coderabbitai configuration
+inheritance: true
+
+reviews:
+  path_instructions:
+    - path: "scripts/**/*.js"
+      instructions: |
+        Records kills (killing blows only), rolls (1s and max per die), drops to 0 HP and scenes per session, and
+        exports a file the FoundryVTT-discord-integration bot reads. Only the GM's client records and writes, so
+        events are not counted once per connected client. The export format is a contract with the bot: flag
+        renamed or removed fields, changed units or file names, and any such change without a
+        SCHEMA_VERSION bump and a matching change in the bot's src/sessionSummaries.js. Exports must not contain player e-mails, user ids beyond what is
+        shown, or chat content.
+    - path: ".github/workflows/{ci,release}.yml"
+      instructions: |
+        Thin callers of dxcufgb/foundry-module-ci, identical in every Foundry module repository. Flag any change
+        here that is not the same change in all modules (it belongs in foundry-module-ci instead), except the
+        pinned SHA of foundry-module-ci itself.
