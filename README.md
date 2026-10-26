@@ -4,6 +4,8 @@
 [![Downloads](https://img.shields.io/github/downloads/dxcufgb/FoundryVTT-session-summary/total?label=downloads)](https://github.com/dxcufgb/FoundryVTT-session-summary/releases)
 [![Ko-fi](https://img.shields.io/badge/Ko--fi-support-FF5E5B?logo=ko-fi&logoColor=white)](https://ko-fi.com/dxcufgb)
 
+<a href="https://dxcufgb.github.io/FVTT-dev-showcase/"><img src="https://dxcufgb.github.io/FVTT-dev-showcase/assets/img/workshop-badge.png" alt="Dxcufgb's Workshop: every Foundry VTT project, video and changelog in one place" width="650"></a>
+
 Records your play session and hands it to your Discord bot. Who landed the killing blows, who rolled the most natural 1s, who dropped to 0 HP and to what, which scenes the party spent the evening in. When the GM ends the session, a JSON summary and a ready-to-post Discord text are written to the Data folder, where a bot on the same computer picks them up.
 
 **Foundry VTT:** v13 · **System:** dnd5e 5.x (tested with dnd5e 5.2.5 and midi-qol 13.0.67)
