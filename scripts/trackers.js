@@ -14,7 +14,7 @@
 import { HIT_MEMORY_MS, SETTLE_MS, UNDO_KILL_MS } from "./constants.js";
 import {
   getSession, isRecording, isOpen, markDirty, setScene, actorRecord, userRecord, markSeen,
-  creditFor, isPC, isEnemy, tick
+  creditFor, isPC, isEnemy, originalActor, tick
 } from "./state.js";
 
 /** targetActorUuid -> { sourceUuid, at, item } */
@@ -266,7 +266,7 @@ function countRest(message) {
   const type = message.system?.type;
   if (!["short", "long"].includes(type)) return;
   const actor = speakerActor(message);
-  const name = actor?.name ?? message.speaker?.alias ?? "";
+  const name = (actor ? originalActor(actor).name : null) ?? message.speaker?.alias ?? "";
   const session = getSession();
   const now = Date.now();
   // The whole party resting at once is one rest
@@ -381,12 +381,13 @@ function removeKill(kill) {
 
 function recordDown(target, source, at) {
   const session = getSession();
-  const a = actorRecord(target);
+  const pc = originalActor(target);
+  const a = actorRecord(pc);
   a.downs += 1;
   session.downs.push({
     at,
-    character: target.name,
-    actorId: target.id,
+    character: pc.name,
+    actorId: pc.id,
     by: source?.actor?.name ?? null,
     scene: game.scenes.active?.name ?? null
   });
@@ -467,8 +468,9 @@ export function notePresentParty() {
   let added = false;
   for (const user of game.users) {
     if (user.isGM || !user.active || !user.character) continue;
-    if (!getSession().actors[user.character.id]) added = true;
-    actorRecord(user.character);
+    const pc = originalActor(user.character);
+    if (!getSession().actors[pc.id]) added = true;
+    actorRecord(pc);
   }
   if (added) markDirty();
 }

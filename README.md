@@ -51,7 +51,7 @@ The module looks for the attacker in this order:
 2. dnd5e **attack, damage and activity cards**, which remember the targets the roller had selected.
 3. **Whoever's combat turn it is**, if no card named an attacker (marked with a ? in the window, `"guessed": true` in the JSON).
 
-The newest hit within the last minute counts. Summons, familiars and companions owned by a player credit that player's character. If an enemy is healed back up within two minutes of its kill (midi's undo, or a GM correction), the kill is taken back.
+The newest hit within the last minute counts. Summons, familiars and companions owned by a player credit that player's character. A character in wild shape or polymorphed (dnd5e makes the form a separate actor, such as "Name (Brown Bear)") is the same character: everything the form does, takes or walks counts for the original character, and the form never gets its own entry or achievement. If an enemy is healed back up within two minutes of its kill (midi's undo, or a GM correction), the kill is taken back.
 
 ### Achievements
 
