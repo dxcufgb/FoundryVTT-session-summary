@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.2
+
+- Wild shape and polymorph forms are no longer counted as extra characters. Damage, kills, distance, dice, downs and rests of a form such as "Bödvar Haraldsson (Brown Bear)" now go to the original character, and forms don't get their own achievement. Applies to what is recorded from this version on.
+
 ## 0.1.1
 
 - Every achievement now comes with a short sentence saying what it is for: under the title in the Session Summary window, as a small grey line in the Discord text, and as `description` in the JSON.

@@ -196,6 +196,7 @@ export function setScene(scene) {
 
 /** The stats record of a player character (created on first use). */
 export function actorRecord(actor) {
+  actor = originalActor(actor);
   const id = actor.id;
   let r = session.actors[id];
   if (!r) {
@@ -265,6 +266,23 @@ export function ownerOf(actor) {
     ?? null;
 }
 
+/**
+ * The character behind a wild shape or polymorph: dnd5e makes the new form a separate actor
+ * ("Name (Brown Bear)") with flags.dnd5e.originalActor. Its stats belong to the original
+ * character. Any other actor is returned as it is.
+ */
+export function originalActor(actor) {
+  let a = actor;
+  // A form can be transformed again (bear -> owl): follow the chain, but never loop
+  for (let i = 0; i < 5 && a; i++) {
+    const id = a.flags?.dnd5e?.originalActor;
+    const original = id && id !== a.id ? game.actors?.get(id) : null;
+    if (!original) break;
+    a = original;
+  }
+  return a;
+}
+
 /** Is this a player character (owned by a player, character type)? */
 export function isPC(actor) {
   return !!actor && actor.type === "character" && actor.hasPlayerOwner;
@@ -276,11 +294,14 @@ export function isPC(actor) {
  */
 export function creditFor(actor) {
   if (!actor) return null;
-  if (isPC(actor)) return { pc: game.actors.get(actor.id) ?? actor, via: null };
+  if (isPC(actor)) {
+    const base = originalActor(actor);
+    return { pc: originalActor(game.actors.get(base.id) ?? base), via: null };
+  }
   if (!actor.hasPlayerOwner) return null;
   const owner = ownerOf(actor);
   const pc = owner?.character ?? game.actors.find(a => a.type === "character" && owner && a.testUserPermission(owner, "OWNER"));
-  return pc ? { pc, via: actor.name } : null;
+  return pc ? { pc: originalActor(pc), via: actor.name } : null;
 }
 
 /** Hostile-ish: not owned by a player and not friendly. */
