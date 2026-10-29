@@ -18,13 +18,15 @@ In Foundry: **Add-on Modules → Install Module**, paste this link into **Manife
 https://github.com/dxcufgb/FoundryVTT-session-summary/releases/latest/download/module.json
 ```
 
+Needs the dnd5e system (5.x). [midi-qol](https://foundryvtt.com/packages/midi-qol) is optional: its GM damage card tells exactly who landed each killing blow. Without it, the module uses dnd5e's attack and damage cards (see [Who gets the killing blow](#who-gets-the-killing-blow)).
+
 ## Recording a session
 
 Recording runs on the **active GM's** client. Players don't need to do anything.
 
 - When the GM logs in, the module asks whether to start recording **Session N** (change this in the settings to start automatically, or never).
-- **Token controls → 📜 Session Summary** opens the window: live stats, title, GM notes, the Discord text, **Pause**, **End session**, **Export now** and downloads.
-- **End session** stops recording and writes the files. The session number then goes up by one.
+- **Token controls → 📜 Session Summary** opens the window: live stats, title, GM notes, the Discord text, **Pause**, **End session**, **Export now**, downloads, and a trash button that discards the session without exporting it.
+- **End session** stops recording and writes the files (if **Export when the session ends** is on). The session number then goes up by one.
 - **Return to Setup** with a session still open asks first: **End session and return to setup** (the summary is written before the world closes), **Return without ending** (the session continues the next time the world is launched) or **Stay in the world**. If the summary can't be written, the world stays open so nothing is lost. Turn this off with **Remind me when returning to setup**.
 - Reloading, crashing or switching GMs mid-session loses nothing: the session is saved in the world every 20 seconds. Time while Foundry is closed doesn't count towards the session length.
 - If a session was never ended and the GM logs in hours later, the module asks whether it's a new session.
@@ -87,8 +89,8 @@ Every character in the session gets **exactly one** achievement, shown with a sh
 | 🎲 | **Dice Goblin** | most rolls (10 or more) |
 | 🍀 | **Lucky Streak** | two or more natural 20s |
 | 🕊️ | **Pacifist** | took part but dealt no damage in a session with fights |
-| ⚖️ | **Perfectly Average** | d20 average within 1 of 10.5 |
-| 🛋️ | **Homebody** | walked the least, under a third of the furthest walker |
+| ⚖️ | **Perfectly Average** | d20 average within 1 of 10.5 (3+ d20 rolls) |
+| 🛋️ | **Homebody** | walked the least, under a third of the furthest walker (who walked 60 ft or more) |
 | 🤫 | **The Quiet One** | five rolls or fewer |
 | 🤝 📸 🪨 📣 🌟 🍪 🐴 | **Team Player, Sightseer, Steadfast, Moral Support, Main Character, Keeper of Snacks, Along for the Ride** | for everyone nothing else fits |
 
@@ -107,9 +109,26 @@ Written to `Data/session-summaries/` (change the folder in the settings). On Win
 | `session-014_2026-10-19.json` | the full summary |
 | `session-014_2026-10-19.md` | the Discord text, never longer than 2000 characters |
 | `latest.json` / `latest.md` | copies of the newest export (watch these) |
-| `index.json` | every exported session of the world, newest first |
+| `index.json` | every exported session of the world, newest first (written last) |
 
-**Export now** mid-session writes the same files with `"inProgress": true`, so a bot can skip those.
+The file name is the session number (3 digits) and the date the session started, in the GM's local time. **Export now** mid-session writes the same files with `"inProgress": true` and `"endedAt": null`, so a bot can skip those. Exporting a session again overwrites its files and replaces its entry in `index.json`.
+
+### index.json
+
+```jsonc
+{
+  "schema": 1,
+  "world": { "id": "…", "title": "…" },
+  "updatedAt": "2026-10-19T20:45:00.000Z",
+  "sessions": [{
+    "id": "…", "number": 14, "title": "The Drowned Crypt",
+    "startedAt": "2026-10-19T17:02:00.000Z", "endedAt": "…", "durationMinutes": 222, "kills": 23,
+    "json": "session-014_2026-10-19.json", "md": "session-014_2026-10-19.md"
+  }]
+}
+```
+
+`json` and `md` are bare file names in the same folder. `index.json` is written after all the other files, so when it changes, the session's files are already there.
 
 ### Discord text
 
@@ -145,7 +164,7 @@ Natural 1s: Thorin ×5
 > The party rang the drowned bell. Next: the Ossuary.
 ```
 
-When a session has a lot going on, the text is shortened step by step until it fits one message: lists get shorter first, then the least important sections (subtext dice lines, rests, distance, biggest hit, damage) are left out, then the achievement descriptions. Only for a very large party are the last achievements left out, with a line saying how many more there are. An achievement is never cut in the middle, and the JSON always has all of them.
+When a session has a lot going on, the text is shortened step by step until it fits one message: lists get shorter first, then the least important sections are left out (rests, the small per-player dice lines, distance, biggest hit, damage, then fallen heroes, scenes, dice and GM notes), then the achievement descriptions. Only for a very large party are the last achievements left out, with a line saying how many more there are. An achievement is never cut in the middle, and the JSON always has all of them.
 
 ### JSON layout (`schema: 1`)
 
@@ -198,7 +217,8 @@ When a session has a lot going on, the text is shortened step by step until it f
 ```
 
 - `kills[].by` is the character credited (`null` when nobody in the party did it; then `killer` names who did, if known). `via` is the summon or companion that actually landed the blow.
-- Fields may be added in later versions; `schema` only goes up when something is renamed or removed.
+- `session.id` stays the same for a session, also when it is exported again. `session.world.id` is the Foundry world id. `title` and `notes` are `null` when empty.
+- Fields may be added in later versions; `schema` only goes up when something is renamed or removed, or changes type or unit.
 
 ### Reading it from a bot (Node, discord.js)
 
@@ -236,15 +256,33 @@ watch(dir, (event, file) => {
 
 ```js
 const ss = game.modules.get("dxcufgbs-session-summary").api;
-ss.open();               // the Session Summary window
-ss.start();              // start recording
-ss.pause(true);          // pause (false resumes)
-await ss.end();          // end (asks), then export if the setting is on → { ended, exported } or false
-await ss.export();       // write the files now → { summary, files }
-ss.getSummary();         // the summary as it would be exported right now
+ss.open();                          // the Session Summary window
+await ss.start();                   // GM: start recording → true, or false if a session is already open
+await ss.pause(true);               // GM: pause (false resumes)
+await ss.end();                     // GM: end (asks), then export if the setting is on → { ended, exported } or false
+await ss.end({ confirm: false });   // GM: the same without asking
+await ss.export();                  // GM: write the files now → { summary, files }, or null if nothing was written
+ss.getSummary();                    // the summary as it would be exported right now (null without a session)
+ss.getSession();                    // the raw recorded session (internal, may change: use getSummary())
 ```
 
-Hook: `Hooks.on("dxcufgbs-session-summary.exported", (summary, files) => …)` after the files are written.
+- `start`, `pause` and `end` only work for the active GM; anyone else gets a warning (`start` and `end` then return `false`). `export` works for any GM and also for an ended session.
+- `end` returns `false` when nothing was ended (no open session, or the GM said no). `exported` is `true` (files written), `false` (the write failed) or `null` (**Export when the session ends** is off).
+- `files` are the paths written, relative to the Data folder: `session-summaries/session-014_2026-10-19.json`, `.md`, `latest.json`, `latest.md` and `index.json`, in that order.
+
+Hook: `Hooks.on("dxcufgbs-session-summary.exported", (summary, files) => …)` after the files are written (**End session**, **Export now** or `export()`). It runs only on the GM's client that wrote them.
+
+**From another module**
+
+The API is set during `init`, so it is there from `setup` on. The session is loaded in `ready`, so `getSession()` and `getSummary()` return `null` before that.
+
+```js
+Hooks.once("ready", () => {
+  const ss = game.modules.get("dxcufgbs-session-summary")?.active ? game.modules.get("dxcufgbs-session-summary").api : null;
+  if (!ss) return;   // Session Summary not installed or not enabled
+  Hooks.on("dxcufgbs-session-summary.exported", (summary, files) => console.log(summary.session.number, files));
+});
+```
 
 ## Notes
 
