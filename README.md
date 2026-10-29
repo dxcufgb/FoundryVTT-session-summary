@@ -108,7 +108,7 @@ Written to `Data/session-summaries/` (change the folder in the settings). On Win
 | --- | --- |
 | `session-014_2026-10-19.json` | the full summary |
 | `session-014_2026-10-19.md` | the Discord text, never longer than 2000 characters |
-| `latest.json` / `latest.md` | copies of the newest export (watch these) |
+| `latest.json` / `latest.md` | copies of the newest export (for a bot when `index.json` is missing) |
 | `index.json` | every exported session of the world, newest first (written last) |
 
 The file name is the session number (3 digits) and the date the session started, in the GM's local time. **Export now** mid-session writes the same files with `"inProgress": true` and `"endedAt": null`, so a bot can skip those. Exporting a session again overwrites its files and replaces its entry in `index.json`.
@@ -223,20 +223,24 @@ When a session has a lot going on, the text is shortened step by step until it f
 ### Reading it from a bot (Node, discord.js)
 
 ```js
-import { watch, readFileSync } from "node:fs";
+import { watch, readFileSync, existsSync } from "node:fs";
 import path from "node:path";
 
 const dir = path.join(process.env.LOCALAPPDATA, "FoundryVTT", "Data", "session-summaries");
-let lastPosted = null;
+const read = file => JSON.parse(readFileSync(path.join(dir, file), "utf8"));
+const posted = new Set();
 let timer = null;
 
 watch(dir, (event, file) => {
-  if (file !== "latest.json") return;
+  if (file !== "index.json" && file !== "latest.json") return;
   clearTimeout(timer);
   timer = setTimeout(async () => {          // wait for the write to finish
-    const summary = JSON.parse(readFileSync(path.join(dir, "latest.json"), "utf8"));
-    if (summary.session.inProgress || summary.session.id === lastPosted) return;
-    lastPosted = summary.session.id;
+    // index.json is written last; latest.json only when there is no index.json
+    const newest = existsSync(path.join(dir, "index.json")) ? read("index.json").sessions[0]?.json : "latest.json";
+    if (!newest || newest !== path.basename(newest) || newest.startsWith(".")) return;   // bare file names only
+    const summary = read(newest);
+    if (summary.session.inProgress || posted.has(summary.session.id)) return;
+    posted.add(summary.session.id);
     await channel.send(summary.markdown);   // or build an embed from the JSON
   }, 1000);
 });
@@ -263,7 +267,6 @@ await ss.end();                     // GM: end (asks), then export if the settin
 await ss.end({ confirm: false });   // GM: the same without asking
 await ss.export();                  // GM: write the files now → { summary, files }, or null if nothing was written
 ss.getSummary();                    // the summary as it would be exported right now (null without a session)
-ss.getSession();                    // the raw recorded session (internal, may change: use getSummary())
 ```
 
 - `start`, `pause` and `end` only work for the active GM; anyone else gets a warning (`start` and `end` then return `false`). `export` works for any GM and also for an ended session.
@@ -274,7 +277,7 @@ Hook: `Hooks.on("dxcufgbs-session-summary.exported", (summary, files) => …)` a
 
 **From another module**
 
-The API is set during `init`, so it is there from `setup` on. The session is loaded in `ready`, so `getSession()` and `getSummary()` return `null` before that.
+The API is set during `init`, so it is there from `setup` on. The session is loaded in `ready`, so `getSummary()` returns `null` before that.
 
 ```js
 Hooks.once("ready", () => {
