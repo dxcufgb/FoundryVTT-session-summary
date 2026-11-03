@@ -1,8 +1,10 @@
 # Dxcufgb's Session Summary
 
-[![Latest version](https://img.shields.io/github/v/release/dxcufgb/FoundryVTT-session-summary?label=version)](https://github.com/dxcufgb/FoundryVTT-session-summary/releases/latest)
-[![Downloads](https://img.shields.io/github/downloads/dxcufgb/FoundryVTT-session-summary/total?label=downloads)](https://github.com/dxcufgb/FoundryVTT-session-summary/releases)
-[![Ko-fi](https://img.shields.io/badge/Ko--fi-support-FF5E5B?logo=ko-fi&logoColor=white)](https://ko-fi.com/dxcufgb)
+[![Foundry v13](https://img.shields.io/github/v/release/dxcufgb/FoundryVTT-session-summary?label=Foundry%20v13&logo=foundryvirtualtabletop&color=ff6400)](https://github.com/dxcufgb/FoundryVTT-session-summary/releases/latest)
+[![Downloads](https://img.shields.io/github/downloads/dxcufgb/FoundryVTT-session-summary/module.zip?label=downloads&color=blue)](https://github.com/dxcufgb/FoundryVTT-session-summary/releases)
+[![Ko-fi](https://img.shields.io/badge/Ko--fi-support-FF5E5B?logo=kofi&logoColor=white)](https://ko-fi.com/dxcufgb)\
+[![CI](https://img.shields.io/github/actions/workflow/status/dxcufgb/FoundryVTT-session-summary/ci.yml?branch=main&label=CI)](https://github.com/dxcufgb/FoundryVTT-session-summary/actions/workflows/ci.yml)
+[![License](https://img.shields.io/github/license/dxcufgb/FoundryVTT-session-summary)](LICENSE)
 
 <a href="https://dxcufgb.github.io/FVTT-dev-showcase/"><img src="https://dxcufgb.github.io/FVTT-dev-showcase/assets/img/workshop-badge.png" alt="Dxcufgb's Workshop: every Foundry VTT project, video and changelog in one place" width="650"></a>
 
@@ -35,4 +37,4 @@ The full guide is in the [wiki](https://github.com/dxcufgb/FoundryVTT-session-su
 
 ## License
 
-MIT
+[MIT](LICENSE)
