@@ -4,6 +4,7 @@
  */
 
 import { MODULE_ID, SCHEMA_VERSION, TICK_MS, MAX_GAP_MS, SAVE_MS, SEEN_MESSAGES } from "./constants.js";
+import { crumb } from "./debug-recorder.js";
 
 let session = null;
 let dirty = false;
@@ -129,6 +130,7 @@ export async function save(force = false) {
     await game.settings.set(MODULE_ID, "session", session ? foundry.utils.deepClone(session) : null);
   } catch (err) {
     dirty = true;
+    crumb("session.saveFailed");
     console.error(`${MODULE_ID} | could not save the session`, err);
   }
 }
@@ -137,6 +139,7 @@ export async function save(force = false) {
 export function adopt(data) {
   if (game.user?.isActiveGM) return;
   session = data && data.id ? foundry.utils.deepClone(data) : null;
+  crumb("session.adopt", { hasSession: !!session, open: isOpen() });
   for (const fn of listeners) fn(session);
 }
 

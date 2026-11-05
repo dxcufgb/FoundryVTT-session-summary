@@ -8,6 +8,7 @@ import { getSession, isOpen, onChange, markDirty } from "./state.js";
 import { buildSummary, formatDuration } from "./summary.js";
 import { exportFolder } from "./export.js";
 import { startSession, endSession, pauseSession, discardSession, exportNow, downloadNow } from "./flow.js";
+import { crumb } from "./debug-recorder.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 const L = key => game.i18n.localize(key);
@@ -112,6 +113,8 @@ export class SessionSummaryApp extends HandlebarsApplicationMixin(ApplicationV2)
 
   _onRender(context, options) {
     super._onRender?.(context, options);
+    // Only the first render: the open window re-renders every 15 seconds
+    if (options?.isFirstRender) crumb("app.render", { state: context.state ?? "none", readOnly: !context.isActiveGM });
     this.#unsubscribe ??= onChange(() => SessionSummaryApp.refresh());
     this.#clock ??= setInterval(() => SessionSummaryApp.refresh(), 15_000);
 

@@ -6,6 +6,7 @@ import { MODULE_ID } from "./constants.js";
 import * as state from "./state.js";
 import { restoreKills, notePresentParty } from "./trackers.js";
 import { exportSession, downloadSession } from "./export.js";
+import { crumb } from "./debug-recorder.js";
 
 const L = key => game.i18n.localize(key);
 const F = (key, data) => game.i18n.format(key, data);
@@ -26,6 +27,7 @@ export async function startSession() {
   await state.start();
   restoreKills();
   notePresentParty();
+  crumb("session.start", { number: state.getSession().number });
   ui.notifications.info(F("DXSS.Notify.Started", { n: state.getSession().number }));
   return true;
 }
@@ -33,6 +35,7 @@ export async function startSession() {
 export async function pauseSession(paused) {
   if (!requireActiveGM()) return;
   await state.setPaused(paused);
+  crumb("session.pause", { paused: !!paused });
   ui.notifications.info(paused ? "DXSS.Notify.Paused" : "DXSS.Notify.Resumed", { localize: true });
 }
 
@@ -53,6 +56,7 @@ export async function endSession({ confirm = true } = {}) {
   await state.end();
   ui.notifications.info(F("DXSS.Notify.Ended", { n: state.getSession().number }));
   const exported = game.settings.get(MODULE_ID, "autoExport") ? !!(await exportNow()) : null;
+  crumb("session.end", { confirmed: confirm, exported });
   return { ended: true, exported };
 }
 
@@ -74,6 +78,7 @@ export function guardReturnToSetup() {
       leave = await confirmLeaving();
     } catch (err) {
       console.error(`${MODULE_ID} | return-to-setup reminder failed`, err); // never block leaving because of us
+      crumb("setup.choice", { choice: "error" });
     }
     if (!leave) return;
     return original.apply(this, args);
@@ -98,6 +103,7 @@ async function confirmLeaving() {
       { action: "stay", label: "DXSS.Dialog.Setup.Stay", icon: "fa-solid fa-xmark" }
     ]
   }); // closing the dialog resolves to null; an error goes to the caller, which lets the GM leave
+  crumb("setup.choice", { choice: ["end", "keep", "stay"].includes(choice) ? choice : "closed" });
   if (choice === "keep") return true;
   if (choice !== "end") return false; // "Stay" or the dialog was closed
   const result = await endSession({ confirm: false });
@@ -117,10 +123,12 @@ export async function exportNow() {
   try {
     if (state.isOpen()) state.tick();
     const result = await exportSession(session);
+    crumb("export.write", { ok: true, files: result.files.length, inProgress: state.isOpen() });
     ui.notifications.info(F("DXSS.Notify.Exported", { path: `Data/${result.files[0]}` }));
     return result;
   } catch (err) {
     console.error(`${MODULE_ID} | export failed`, err);
+    crumb("export.write", { ok: false, inProgress: state.isOpen() });
     ui.notifications.error(F("DXSS.Notify.ExportFailed", { error: err?.message ?? err }));
     return null;
   }
@@ -141,6 +149,7 @@ export async function discardSession() {
   if (!ok) return false;
   await state.discard();
   restoreKills();
+  crumb("session.discard");
   return true;
 }
 
@@ -156,6 +165,7 @@ export async function readyCheck() {
   if (session && !session.endedAt) {
     const idle = Date.now() - (session.lastSeen ?? 0);
     if (idle < STALE_MS) {
+      crumb("ready.check", { open: true, stale: false });
       ui.notifications.info(F("DXSS.Notify.Continuing", { n: session.number }));
       return;
     }
@@ -169,6 +179,7 @@ export async function readyCheck() {
         { action: "later", label: "DXSS.Dialog.Stale.Later", icon: "fa-solid fa-clock" }
       ]
     }).catch(() => null);
+    crumb("ready.check", { open: true, stale: true, choice: ["new", "continue", "later"].includes(choice) ? choice : "closed" });
     if (choice === "new") {
       await endSession({ confirm: false });
       await startSession();
@@ -176,6 +187,7 @@ export async function readyCheck() {
     return;
   }
 
+  crumb("ready.check", { open: false, autoStart: ["ask", "always", "never"].includes(mode) ? mode : "other" });
   if (mode === "always") return startSession();
   if (mode !== "ask") return;
   const ok = await Dialog().confirm({
