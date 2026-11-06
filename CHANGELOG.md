@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.1.3
 
 - Optional support for Dxcufgb's Debug Recorder: when it is installed and the GM records, this module adds its state (counts only, no names or text) and a trail of its main actions to the bug report file. Nothing changes without it.
 
