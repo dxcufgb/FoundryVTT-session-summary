@@ -110,7 +110,7 @@ Hooks.once("ready", async () => {
 /* -------------------------------------------- */
 
 /**
- * Runtime state for Dxcufgb's Debug Recorder: counts and booleans only. Never names (characters, players,
+ * Runtime state for Dxcufgb's Debug Recorder: counts, booleans and the dnd5e version string only. Never names (characters, players,
  * enemies, scenes, items), the session title or notes.
  */
 function debugSnapshot() {

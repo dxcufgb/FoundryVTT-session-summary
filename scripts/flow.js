@@ -35,7 +35,7 @@ export async function startSession() {
 export async function pauseSession(paused) {
   if (!requireActiveGM()) return;
   await state.setPaused(paused);
-  crumb("session.pause", { paused: !!paused });
+  if (state.isOpen()) crumb("session.pause", { paused: !!paused });
   ui.notifications.info(paused ? "DXSS.Notify.Paused" : "DXSS.Notify.Resumed", { localize: true });
 }
 

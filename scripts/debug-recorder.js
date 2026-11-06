@@ -5,8 +5,9 @@
  * module works exactly as without it. When it is there, this module registers a snapshot of its runtime state
  * and leaves breadcrumbs at its main actions while the GM is recording.
  *
- * Privacy: snapshots and breadcrumbs hold only counts, booleans, numbers and this module's own enum values. Never
- * names (characters, players, enemies, scenes, items), session titles or notes, chat text, paths or URLs.
+ * Privacy: snapshots and breadcrumbs hold only counts, booleans, numbers, version strings, module/system ids and
+ * this module's own enum values. Never names (characters, players, enemies, scenes, items), session titles or
+ * notes, chat text, paths or URLs.
  */
 
 import { MODULE_ID } from "./constants.js";
@@ -30,6 +31,7 @@ export function crumb(key, data) {
   }
 }
 
+/** The registered snapshot function, guarded so a bug in it gives `{snapshotError: true}` instead of throwing. */
 function snapshot() {
   try {
     return snapshotFn() ?? {};
@@ -39,12 +41,15 @@ function snapshot() {
   }
 }
 
-/** Register with the recorder once (whichever of the ready hook or the fallback comes first). */
+/**
+ * Register with the recorder once (whichever of the ready hook or the fallback comes first). The API is kept only
+ * when `register` succeeded, so a failed attempt can be retried by the fallback and a successful one never repeats.
+ */
 function connect(rec) {
   if (recorder || !rec || typeof rec.register !== "function") return;
-  recorder = rec;
   try {
     rec.register(MODULE_ID, { snapshot });
+    recorder = rec;
   } catch (err) {
     console.warn(`${MODULE_ID} | debug recorder registration failed`, err);
   }

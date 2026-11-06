@@ -36,5 +36,5 @@ and no npm dependencies.
 - **Return to Setup**: the `game.shutDown` wrapper must never stop the GM from leaving because of an error in this module, and must keep the world open when the export failed.
 - **Escaping**: the template uses `{{ }}` only (titles, notes and names are user text); HTML built for dialogs uses `escapeHTML` (`esc`) for anything not a number or a localized string.
 - **Privacy**: the export contains names, Foundry user/actor ids, the GM's title and notes. Never add chat message text or other user data to it.
-- **Debug Recorder**: debug-recorder integration is optional; snapshot/breadcrumb data must never contain names, free text, image paths or URLs (only counts, booleans, numbers and this module's own enum values). A recorder error must never break this module.
+- **Debug Recorder**: debug-recorder integration is optional; snapshot/breadcrumb data must never contain names, free text, image paths or URLs (only counts, booleans, numbers, version strings, module/system ids and this module's own enum values). A recorder error must never break this module.
 - `dnd5e` lookups (`flags.dnd5e`, `CONFIG.Dice.D20Roll`, `system.attributes.hp`) and midi-qol flags must be optional-chained: midi-qol may be absent.
