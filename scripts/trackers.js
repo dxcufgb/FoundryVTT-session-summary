@@ -16,6 +16,7 @@ import {
   getSession, isRecording, isOpen, markDirty, setScene, actorRecord, userRecord, markSeen,
   creditFor, isPC, isEnemy, originalActor, tick
 } from "./state.js";
+import { crumb } from "./debug-recorder.js";
 
 /** targetActorUuid -> { sourceUuid, at, item } */
 const hits = new Map();
@@ -23,6 +24,11 @@ const hits = new Map();
 const heals = new Map();
 /** Enemies currently counted as killed: actorUuid -> kill entry */
 const killed = new Map();
+
+/** Sizes of the trackers' memory (for the Debug Recorder snapshot). */
+export function trackerStats() {
+  return { hitMemory: hits.size, healMemory: heals.size, killedEnemies: killed.size };
+}
 
 export function registerTrackers() {
   Hooks.on("createChatMessage", message => onMessage(message));
@@ -177,12 +183,15 @@ function countRolls(message) {
   const credit = actor ? creditFor(actor) : null;
   let damageTotal = 0;
   let counted = false;
+  let countedRolls = 0;
+  let skippedRolls = 0;
 
   rolls.forEach((roll, i) => {
     if (!roll?._evaluated) return;
     const key = `${i}|${roll.formula}|${roll.total}`;
-    if (!markSeen(message.id, key)) return;
+    if (!markSeen(message.id, key)) { skippedRolls += 1; return; }
     counted = true;
+    countedRolls += 1;
     const category = rollCategory(message, roll);
     const u = userRecord(user);
     if (credit && !u.characters.includes(credit.pc.name)) u.characters.push(credit.pc.name);
@@ -254,6 +263,9 @@ function countRolls(message) {
     const hit = { amount: damageTotal, character: credit.pc.name, actorId: credit.pc.id, item, via: credit.via, at: Date.now() };
     if (!a.biggestHit || damageTotal > a.biggestHit.amount) a.biggestHit = hit;
     if (!session.biggestHit || damageTotal > session.biggestHit.amount) session.biggestHit = hit;
+  }
+  if (countedRolls || skippedRolls) {
+    crumb("rolls.count", { counted: countedRolls, alreadySeen: skippedRolls, credited: !!credit, companion: !!credit?.via });
   }
   if (counted) markDirty();
 }
@@ -327,7 +339,9 @@ function onHeal(target, amount, at, before, now) {
     const kill = killed.get(target.uuid);
     if (kill) {
       killed.delete(target.uuid);
-      if (at - kill.at < UNDO_KILL_MS) removeKill(kill);
+      const undo = at - kill.at < UNDO_KILL_MS;
+      if (undo) removeKill(kill);
+      crumb("kill.undo", { removed: undo, total: getSession().kills.length });
     }
   }
   const source = sourceOf(target, at, true);
@@ -343,12 +357,12 @@ function onDefeated(actor) {
   const at = Date.now();
   setTimeout(() => {
     if (!isRecording() || killed.has(actor.uuid)) return;
-    recordKill(actor, sourceOf(actor, at), at);
+    recordKill(actor, sourceOf(actor, at), at, "defeated");
     markDirty();
   }, SETTLE_MS);
 }
 
-function recordKill(target, source, at) {
+function recordKill(target, source, at, from = "hp") {
   if (killed.has(target.uuid)) return;
   const session = getSession();
   const credit = source ? creditFor(source.actor) : null;
@@ -369,6 +383,10 @@ function recordKill(target, source, at) {
   session.kills.push(kill);
   killed.set(target.uuid, kill);
   if (credit) actorRecord(credit.pc).kills += 1;
+  crumb("kill.record", {
+    from, credited: !!credit, companion: !!credit?.via, guessed: kill.guessed, inCombat: kill.round != null,
+    unlinked: !!target.isToken, total: session.kills.length
+  });
 }
 
 function removeKill(kill) {
@@ -384,6 +402,7 @@ function recordDown(target, source, at) {
   const pc = originalActor(target);
   const a = actorRecord(pc);
   a.downs += 1;
+  crumb("down.record", { attributed: !!source, guessed: !!source?.guessed });
   session.downs.push({
     at,
     character: pc.name,
@@ -433,6 +452,7 @@ function onCombatEnd(combat) {
   noteEnemies(combat, c);
   c.rounds = Math.max(c.rounds, combat.round ?? 0);
   c.endedAt = Date.now();
+  crumb("combat.end", { rounds: c.rounds, enemyKinds: Object.keys(c.enemies).length });
   markDirty();
 }
 
@@ -444,7 +464,10 @@ function onMove(token, movement, operation) {
   if (!isRecording()) return;
   const actor = token.actor;
   if (!isPC(actor)) return;
-  if (operation?.teleport || movement?.destination?.action === "displace") return;
+  if (operation?.teleport || movement?.destination?.action === "displace") {
+    crumb("move.skip", { reason: operation?.teleport ? "teleport" : "displace" });
+    return;
+  }
   let distance = Number(movement?.passed?.distance);
   if (!Number.isFinite(distance)) {
     try {

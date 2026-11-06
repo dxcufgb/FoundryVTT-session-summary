@@ -16,6 +16,7 @@ and no npm dependencies.
 - `scripts/achievements.js` – `ACHIEVEMENTS` and `assignAchievements` (Hungarian algorithm: exactly one per character, no duplicates unless the party outgrows the fallbacks).
 - `scripts/export.js` – writes the files to the Data folder (`FilePicker.upload`), `index.json`, the `dxcufgbs-session-summary.exported` hook, downloads.
 - `scripts/flow.js` – start / pause / end / export / discard with the GM dialogs, the stale-session prompt, and the `game.shutDown` wrapper that asks before "Return to Setup".
+- `scripts/debug-recorder.js` – optional integration with Dxcufgb's Debug Recorder (`dxcufgbs-debug-recorder`, not a dependency): `crumb(key, data)` breadcrumbs (no-op unless it is recording) and `registerDebugRecorder({ snapshot })`, called in `ready` with `debugSnapshot` from `main.js`.
 - `scripts/app.js`, `templates/session-window.hbs`, `styles/session-summary.css` – the Session Summary window (ApplicationV2).
 - `.github/workflows/ci.yml` / `release.yml` – thin callers of `dxcufgb/foundry-module-ci` (checks, packaging, release); identical in every module, do not edit here.
 
@@ -35,4 +36,5 @@ and no npm dependencies.
 - **Return to Setup**: the `game.shutDown` wrapper must never stop the GM from leaving because of an error in this module, and must keep the world open when the export failed.
 - **Escaping**: the template uses `{{ }}` only (titles, notes and names are user text); HTML built for dialogs uses `escapeHTML` (`esc`) for anything not a number or a localized string.
 - **Privacy**: the export contains names, Foundry user/actor ids, the GM's title and notes. Never add chat message text or other user data to it.
+- **Debug Recorder**: debug-recorder integration is optional; snapshot/breadcrumb data must never contain names, free text, image paths or URLs (only counts, booleans, numbers, version strings, module/system ids and this module's own enum values). A recorder error must never break this module.
 - `dnd5e` lookups (`flags.dnd5e`, `CONFIG.Dice.D20Roll`, `system.attributes.hp`) and midi-qol flags must be optional-chained: midi-qol may be absent.

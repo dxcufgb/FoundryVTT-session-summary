@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.3
+
+- Optional support for Dxcufgb's Debug Recorder: when it is installed and the GM records, this module adds its state (counts only, no names or text) and a trail of its main actions to the bug report file. Nothing changes without it.
+
 ## 0.1.2
 
 - Wild shape and polymorph forms are no longer counted as extra characters. Damage, kills, distance, dice, downs and rests of a form such as "Bödvar Haraldsson (Brown Bear)" now go to the original character, and forms don't get their own achievement. Applies to what is recorded from this version on.

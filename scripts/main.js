@@ -16,9 +16,10 @@
  * Hook: "dxcufgbs-session-summary.exported" (summary, files) after files are written.
  */
 
-import { MODULE_ID } from "./constants.js";
+import { MODULE_ID, SCHEMA_VERSION } from "./constants.js";
 import * as state from "./state.js";
-import { registerTrackers, restoreKills, notePresentParty } from "./trackers.js";
+import { registerTrackers, restoreKills, notePresentParty, trackerStats } from "./trackers.js";
+import { registerDebugRecorder } from "./debug-recorder.js";
 import { buildSummary } from "./summary.js";
 import { startSession, endSession, pauseSession, exportNow, readyCheck, guardReturnToSetup } from "./flow.js";
 import { SessionSummaryApp } from "./app.js";
@@ -95,6 +96,7 @@ Hooks.once("setup", () => {
 Hooks.once("ready", async () => {
   state.load();
   restoreKills();
+  registerDebugRecorder({ snapshot: debugSnapshot });
   if (game.user.isGM) guardReturnToSetup();
   if (!game.user.isActiveGM) return;
   if (state.isOpen() && game.scenes.active) state.setScene(game.scenes.active);
@@ -102,6 +104,56 @@ Hooks.once("ready", async () => {
   await readyCheck();
   ui.controls?.render();
 });
+
+/* -------------------------------------------- */
+/*  Debug Recorder (optional)                   */
+/* -------------------------------------------- */
+
+/**
+ * Runtime state for Dxcufgb's Debug Recorder: counts, booleans and the dnd5e version string only. Never names (characters, players,
+ * enemies, scenes, items), the session title or notes.
+ */
+function debugSnapshot() {
+  const session = state.getSession();
+  const count = obj => Object.keys(obj ?? {}).length;
+  const list = arr => (Array.isArray(arr) ? arr : []);
+  const kills = list(session?.kills);
+  const combats = list(session?.combats);
+  const rests = list(session?.rests);
+  return {
+    schemaVersion: SCHEMA_VERSION,
+    responsibleGM: !!game.user?.isActiveGM,
+    isGM: !!game.user?.isGM,
+    midiQol: !!game.modules.get("midi-qol")?.active,
+    system: game.system?.id === "dnd5e" ? { id: "dnd5e", version: game.system.version } : { id: "other" },
+    returnToSetupGuard: !!game.shutDown?.dxssGuarded,
+    exportedSessions: list(game.settings.get(MODULE_ID, "history")).length,
+    session: session ? {
+      schema: session.schema ?? null,
+      number: session.number ?? null,
+      state: session.endedAt ? "ended" : session.paused ? "paused" : "recording",
+      recording: state.isRecording(),
+      activeMinutes: Math.round((session.activeMs ?? 0) / 60_000),
+      hasTitle: !!session.title,
+      hasNotes: !!session.notes,
+      onScene: !!session.currentScene,
+      scenes: count(session.scenes),
+      actors: count(session.actors),
+      users: count(session.users),
+      kills: kills.length,
+      killsUnattributed: kills.filter(k => !k.by).length,
+      killsGuessed: kills.filter(k => k.guessed).length,
+      killsByCompanion: kills.filter(k => k.via).length,
+      downs: list(session.downs).length,
+      combats: combats.length,
+      combatsOpen: combats.filter(c => !c.endedAt).length,
+      rests: { short: rests.filter(r => r.type === "short").length, long: rests.filter(r => r.type === "long").length },
+      biggestHit: !!session.biggestHit,
+      seenMessages: count(session.seen)
+    } : null,
+    trackers: trackerStats()
+  };
+}
 
 /* -------------------------------------------- */
 /*  Left menu (Token controls)                  */
